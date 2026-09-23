@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta http-equiv="Cache-Control" content="no-cache">
+<title>Totem — Sonho dá Sorte</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&display=swap">
+<!--TOTEM_CONFIG-->
+<style>
+*{ box-sizing:border-box; margin:0; padding:0; }
+html,body{ width:100%; height:100%; background:#08021f; overflow:hidden; }
+body{ font-family:'Nunito', 'Segoe UI', Roboto, Arial, sans-serif; -webkit-font-smoothing:antialiased; }
+
+/* palco fixo 1080x1920 escalado para caber em qualquer tela */
+.viewport{ position:fixed; top:0; left:0; right:0; bottom:0; overflow:hidden; background:#08021f; }
+.scaler{ position:absolute; left:50%; top:50%; width:1080px; height:1920px;
+  -webkit-transform-origin:center center; transform-origin:center center; }
+.stage{ position:relative; width:1080px; height:1920px; overflow:hidden; background:#0a0233; }
+
+/* ---------- fundo ---------- */
+.bg-base{ position:absolute; top:0; left:0; right:0; bottom:0;
+  background:radial-gradient(120% 85% at 68% 42%, #331074 0%, #1a075a 42%, #0a0233 100%); }
+.bg-stars{ position:absolute; top:0; left:0; right:0; bottom:0; opacity:.55;
+  background-image:
+    radial-gradient(2px 2px at 12% 18%, #fff, transparent 60%),
+    radial-gradient(1.5px 1.5px at 32% 44%, #d8c3ff, transparent 60%),
+    radial-gradient(2px 2px at 71% 12%, #fff, transparent 60%),
+    radial-gradient(1.5px 1.5px at 88% 36%, #f6c53f, transparent 60%),
+    radial-gradient(2px 2px at 54% 70%, #fff, transparent 60%),
+    radial-gradient(1.5px 1.5px at 18% 82%, #d8c3ff, transparent 60%),
+    radial-gradient(2px 2px at 92% 76%, #fff, transparent 60%),
+    radial-gradient(1.5px 1.5px at 42% 92%, #f6c53f, transparent 60%),
+    radial-gradient(1.5px 1.5px at 6% 58%, #fff, transparent 60%),
+    radial-gradient(1.5px 1.5px at 64% 30%, #fff, transparent 60%); }
+.bg-numbers span{ position:absolute; font-weight:800; color:#7b46e0; opacity:.12;
+  text-shadow:0 0 20px rgba(123,70,224,.4); }
+
+.halo{ position:absolute; right:-160px; bottom:-120px; width:1000px; height:1000px; border-radius:50%; z-index:1;
+  background:radial-gradient(circle, rgba(246,197,63,.38) 0%, rgba(164,95,208,.25) 35%, rgba(26,7,90,0) 68%);
+  -webkit-animation:haloBreath 9s ease-in-out infinite; animation:haloBreath 9s ease-in-out infinite; }
+
+/* moedas em CSS */
+.coin{ position:absolute; z-index:7; border-radius:50%;
+  background:radial-gradient(circle at 35% 30%, #fff6c4 0%, #f8d92a 28%, #eca647 62%, #b26f1f 100%);
+  box-shadow:inset 0 0 0 6px rgba(178,111,31,.55), inset 0 -6px 10px rgba(120,60,0,.35), 0 8px 16px rgba(0,0,0,.35);
+  display:-webkit-flex; display:flex; -webkit-align-items:center; align-items:center; -webkit-justify-content:center; justify-content:center;
+  color:#9a5a12; font-weight:900; }
+.c1{ right:520px; bottom:430px; width:130px; height:130px; font-size:64px; -webkit-animation:cSpin 7s ease-in-out infinite; animation:cSpin 7s ease-in-out infinite; }
+.c2{ right:600px; bottom:250px; width:88px;  height:88px;  font-size:44px; -webkit-animation:cTumble 5.6s ease-in-out infinite .8s; animation:cTumble 5.6s ease-in-out infinite .8s; }
+.c3{ right:440px; bottom:600px; width:96px;  height:96px;  font-size:48px; -webkit-animation:cBob 6.2s ease-in-out infinite .3s; animation:cBob 6.2s ease-in-out infinite .3s; }
+.c4{ right:470px; bottom:170px; width:92px;  height:92px;  font-size:46px; -webkit-animation:cTumble 8s linear infinite 1.2s reverse; animation:cTumble 8s linear infinite 1.2s reverse; }
+.c5{ right:80px;  bottom:720px; width:66px;  height:66px;  font-size:32px; -webkit-animation:cSpin 5s ease-in-out infinite .5s; animation:cSpin 5s ease-in-out infinite .5s; }
+.c6{ right:120px; bottom:120px; width:76px;  height:76px;  font-size:38px; -webkit-animation:cBob 6.8s ease-in-out infinite 1.8s; animation:cBob 6.8s ease-in-out infinite 1.8s; }
+.c7{ right:60px;  bottom:420px; width:70px;  height:70px;  font-size:34px; -webkit-animation:cSpin 5.8s ease-in-out infinite 2.2s reverse; animation:cSpin 5.8s ease-in-out infinite 2.2s reverse; }
+
+/* trevo grande (substitui o mascote) */
+.lucky{ position:absolute; right:110px; bottom:180px; width:430px; height:430px; z-index:6;
+  -webkit-animation:float 6s ease-in-out infinite; animation:float 6s ease-in-out infinite;
+  -webkit-filter:drop-shadow(0 0 40px rgba(246,197,63,.45)); filter:drop-shadow(0 0 40px rgba(246,197,63,.45)); }
+.lucky svg{ width:100%; height:100%; display:block; }
+.lucky-spin{ -webkit-transform-origin:50% 50%; transform-origin:50% 50%;
+  -webkit-animation:slowSpin 40s linear infinite; animation:slowSpin 40s linear infinite; }
+
+/* ---------- header ---------- */
+.hdr{ position:absolute; left:0; top:0; width:1080px; height:118px; background:#fff; z-index:20; box-shadow:0 2px 0 rgba(0,0,0,.06); }
+.logo{ position:absolute; left:40px; top:50%; -webkit-transform:translateY(-50%); transform:translateY(-50%); height:74px;
+  display:-webkit-flex; display:flex; -webkit-align-items:center; align-items:center; }
+.logo img{ height:74px; width:auto; display:block; }
+.logo-mark{ width:66px; height:66px; margin-right:14px; }
+.logo-txt{ line-height:.95; }
+.logo-txt .l1{ display:block; color:#7C3E96; font-weight:900; font-size:40px; letter-spacing:-.5px; }
+.logo-txt .l2{ display:block; color:#eca647; font-weight:900; font-size:30px; letter-spacing:.5px; }
+.hdr-right{ position:absolute; right:44px; top:12px; text-align:right; }
+.date{ color:#7C3E96; font-weight:800; font-size:26px; }
+.clock{ color:#1b1330; font-weight:800; font-size:44px; line-height:1; font-variant-numeric:tabular-nums; letter-spacing:1px; }
+
+/* ---------- pílula ---------- */
+.pill{ position:absolute; left:60px; top:184px; width:960px; height:86px; border-radius:44px; padding:0 42px; z-index:15;
+  border:3px solid #eca647; background:linear-gradient(#2c0d59,#210a40);
+  display:-webkit-flex; display:flex; -webkit-align-items:center; align-items:center; -webkit-justify-content:space-between; justify-content:space-between;
+  color:#fff; font-weight:800; font-size:42px;
+  box-shadow:0 8px 30px rgba(0,0,0,.4), 0 0 34px rgba(246,197,63,.28);
+  -webkit-animation:pillGlow 3s ease-in-out infinite; animation:pillGlow 3s ease-in-out infinite; }
+.pill-left, .pill-right{ display:-webkit-flex; display:flex; -webkit-align-items:center; align-items:center; }
+.pill-left svg{ width:52px; height:52px; margin-right:16px; }
+.pill-right{ color:#DEE8FB; font-weight:600; }
+.pill-right svg{ width:38px; height:38px; stroke:#D8BBE4; margin-right:14px; }
+
+/* ---------- título ---------- */
+.title{ position:absolute; top:298px; left:0; width:1080px; z-index:15;
+  display:-webkit-flex; display:flex; -webkit-align-items:center; align-items:center; -webkit-justify-content:center; justify-content:center;
+  color:#f6c53f; font-weight:900; font-size:48px; letter-spacing:5px; text-shadow:0 0 20px rgba(246,197,63,.35); }
+.title-text{ white-space:nowrap; margin:0 22px; }
+.flourish{ position:relative; width:130px; height:3px; }
+.flourish.left{ background:linear-gradient(90deg, transparent, #f6c53f); }
+.flourish.right{ background:linear-gradient(270deg, transparent, #f6c53f); }
+.flourish:after{ content:''; position:absolute; top:50%; width:12px; height:12px; background:#f6c53f;
+  -webkit-transform:translateY(-50%) rotate(45deg); transform:translateY(-50%) rotate(45deg); }
+.flourish.left:after{ right:-4px; }
+.flourish.right:after{ left:-4px; }
+
+/* ---------- bolas ---------- */
+.balls{ position:absolute; left:50px; top:398px; width:980px; height:158px; z-index:15;
+  display:-webkit-flex; display:flex; -webkit-justify-content:space-between; justify-content:space-between; }
+.ball{ width:150px; height:150px; border-radius:50%; position:relative;
+  display:-webkit-flex; display:flex; -webkit-align-items:center; align-items:center; -webkit-justify-content:center; justify-content:center;
+  background:radial-gradient(circle at 38% 30%, #ffffff 0%, #f3e7f4 55%, #e0cee8 100%);
+  box-shadow:0 0 0 3px rgba(200,172,232,.55), 0 0 26px 6px rgba(246,197,63,.40), 0 12px 26px rgba(0,0,0,.4),
+             inset 0 -9px 16px rgba(150,120,160,.4), inset 0 9px 14px rgba(255,255,255,.95);
+  -webkit-transition:box-shadow .3s ease; transition:box-shadow .3s ease; }
+.ball .digit{ font-weight:900; font-size:94px; line-height:1; color:#0e1a5b; font-variant-numeric:tabular-nums; }
+.ball.spin .digit{ -webkit-filter:blur(1.2px); filter:blur(1.2px); opacity:.8; }
+.ball.land{ -webkit-animation:pop .45s cubic-bezier(.2,1.5,.4,1); animation:pop .45s cubic-bezier(.2,1.5,.4,1); }
+.ball.glow{ box-shadow:0 0 0 5px rgba(246,197,63,.95), 0 0 46px 12px rgba(246,197,63,.78), 0 12px 26px rgba(0,0,0,.45),
+             inset 0 -9px 16px rgba(150,120,160,.4), inset 0 9px 14px rgba(255,255,255,.95); }
+
+/* ---------- prêmios ---------- */
+.tiers{ position:absolute; left:50px; top:612px; width:980px; height:258px; z-index:15; border-radius:30px;
+  display:-webkit-flex; display:flex;
+  background:rgba(30,10,66,.6); border:1px solid rgba(246,197,63,.22);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.06), 0 12px 34px rgba(0,0,0,.32); }
+.tier{ -webkit-flex:1; flex:1; position:relative;
+  display:-webkit-flex; display:flex; -webkit-flex-direction:column; flex-direction:column;
+  -webkit-align-items:center; align-items:center; -webkit-justify-content:center; justify-content:center; }
+.tier + .tier:before{ content:''; position:absolute; left:0; top:26%; height:48%; width:1px; background:rgba(255,255,255,.10); }
+.tier-icon{ font-size:58px; line-height:1; margin-bottom:10px; }
+.tier-name{ color:#fff; font-weight:800; font-size:38px; margin-bottom:10px; }
+.tier-value{ color:#f6c53f; font-weight:600; font-size:42px; letter-spacing:2px; font-variant-numeric:tabular-nums;
+  min-height:50px; opacity:.28; -webkit-transform:translateY(6px); transform:translateY(6px); }
+.tier.show .tier-value{ -webkit-animation:rise .5s ease both; animation:rise .5s ease both; }
+
+/* ---------- ganhadores ---------- */
+.winners{ position:absolute; left:50px; top:892px; width:980px; height:104px; z-index:15; border-radius:24px; padding:0 32px;
+  display:-webkit-flex; display:flex; -webkit-align-items:center; align-items:center;
+  background:rgba(30,10,66,.6); border:1px solid rgba(246,197,63,.16); box-shadow:0 12px 30px rgba(0,0,0,.28); }
+.trophy{ width:80px; height:80px; margin-right:22px; }
+.winners-txt{ color:#fff; font-weight:600; font-size:44px; }
+.winners-txt b{ color:#f6c53f; font-weight:800; font-size:50px; }
+.winners-txt b.dim{ font-weight:600; opacity:.28; letter-spacing:3px; }
+
+/* ---------- próximo sorteio ---------- */
+.card{ position:absolute; left:60px; top:1058px; width:440px; height:300px; z-index:15; border-radius:30px; background:#fff; padding:30px 36px;
+  box-shadow:0 22px 55px rgba(0,0,0,.5); }
+.card-kicker{ color:#7C3E96; font-weight:800; font-size:26px; letter-spacing:2px; }
+.card-when{ color:#241a3d; font-weight:900; font-size:48px; line-height:1.05; margin-top:6px; white-space:nowrap; }
+.cd{ display:-webkit-flex; display:flex; -webkit-align-items:flex-start; align-items:flex-start; margin-top:16px; }
+.cd-grp{ display:-webkit-flex; display:flex; -webkit-flex-direction:column; flex-direction:column; -webkit-align-items:center; align-items:center; width:98px; }
+.cd-num{ color:#7C3E96; font-weight:900; font-size:82px; line-height:.9; font-variant-numeric:tabular-nums; }
+.cd-lab{ color:#8a84a0; font-weight:700; font-size:26px; margin-top:8px; }
+.cd-sep{ color:#cdc6dc; font-weight:900; font-size:66px; line-height:1; padding-top:4px; margin:0 3px; }
+.bar{ position:absolute; left:36px; right:36px; bottom:26px; height:9px; border-radius:6px; background:#ece7f5; overflow:hidden; }
+.bar-fill{ height:100%; width:0; border-radius:6px; background:linear-gradient(90deg,#a45fd0,#7C3E96); -webkit-transition:width 1s linear; transition:width 1s linear; }
+
+/* ---------- QR ---------- */
+.qr-box{ position:absolute; left:60px; top:1480px; width:300px; z-index:30; text-align:center; }
+.qr{ width:300px; height:300px; background:#fff; border-radius:24px; padding:18px; box-shadow:0 18px 40px rgba(0,0,0,.45); }
+.qr img, .qr svg{ width:100%; height:100%; display:block; }
+.qr-cap{ white-space:nowrap; color:#DEE8FB; font-weight:700; font-size:30px; margin-top:18px; }
+
+/* ---------- animações ---------- */
+@-webkit-keyframes cSpin{ 0%{-webkit-transform:translateY(0) rotate(0)} 50%{-webkit-transform:translateY(-26px) rotate(180deg)} 100%{-webkit-transform:translateY(0) rotate(360deg)} }
+@keyframes cSpin{ 0%{transform:translateY(0) rotate(0)} 50%{transform:translateY(-26px) rotate(180deg)} 100%{transform:translateY(0) rotate(360deg)} }
+@-webkit-keyframes cTumble{ 0%{-webkit-transform:translate(0,0) rotate(0)} 50%{-webkit-transform:translate(8px,-30px) rotate(190deg)} 100%{-webkit-transform:translate(0,0) rotate(360deg)} }
+@keyframes cTumble{ 0%{transform:translate(0,0) rotate(0)} 50%{transform:translate(8px,-30px) rotate(190deg)} 100%{transform:translate(0,0) rotate(360deg)} }
+@-webkit-keyframes cBob{ 0%,100%{-webkit-transform:translateY(0) rotate(-10deg)} 50%{-webkit-transform:translateY(-22px) rotate(10deg)} }
+@keyframes cBob{ 0%,100%{transform:translateY(0) rotate(-10deg)} 50%{transform:translateY(-22px) rotate(10deg)} }
+@-webkit-keyframes haloBreath{ 0%,100%{-webkit-transform:scale(1);opacity:.8} 50%{-webkit-transform:scale(1.06);opacity:1} }
+@keyframes haloBreath{ 0%,100%{transform:scale(1);opacity:.8} 50%{transform:scale(1.06);opacity:1} }
+@-webkit-keyframes float{ 0%,100%{-webkit-transform:translateY(0)} 50%{-webkit-transform:translateY(-24px)} }
+@keyframes float{ 0%,100%{transform:translateY(0)} 50%{transform:translateY(-24px)} }
+@-webkit-keyframes slowSpin{ to{-webkit-transform:rotate(360deg)} }
+@keyframes slowSpin{ to{transform:rotate(360deg)} }
+@-webkit-keyframes pillGlow{ 0%,100%{border-color:#eca647} 50%{border-color:#f8d92a} }
+@keyframes pillGlow{ 0%,100%{border-color:#eca647; box-shadow:0 8px 30px rgba(0,0,0,.4), 0 0 24px rgba(246,197,63,.22)} 50%{border-color:#f8d92a; box-shadow:0 8px 30px rgba(0,0,0,.4), 0 0 44px rgba(246,197,63,.45)} }
+@-webkit-keyframes pop{ 0%{-webkit-transform:scale(.5)} 60%{-webkit-transform:scale(1.12)} 100%{-webkit-transform:scale(1)} }
+@keyframes pop{ 0%{transform:scale(.5)} 60%{transform:scale(1.12)} 100%{transform:scale(1)} }
+@-webkit-keyframes rise{ to{opacity:1;-webkit-transform:none} }
+@keyframes rise{ to{opacity:1;transform:none} }
+
+@media (prefers-reduced-motion: reduce){
+  .coin, .halo, .lucky, .lucky-spin, .pill{ -webkit-animation:none !important; animation:none !important; }
+}
+</style>
+</head>
+<body>
+<div class="viewport">
+  <div class="scaler" id="scaler">
+    <div class="stage">
+
+      <!-- fundo -->
+      <div class="bg-base"></div>
+      <div class="bg-stars"></div>
+      <div class="bg-numbers" id="bgNumbers"></div>
+      <div class="halo"></div>
+
+      <div class="lucky" aria-hidden="true">
+        <svg viewBox="0 0 200 200">
+          <defs>
+            <radialGradient id="leaf" cx="40%" cy="35%" r="70%">
+              <stop offset="0%" stop-color="#b8f28a"/><stop offset="55%" stop-color="#3fb54a"/><stop offset="100%" stop-color="#1c6e2b"/>
+            </radialGradient>
+            <radialGradient id="gold" cx="38%" cy="32%" r="70%">
+              <stop offset="0%" stop-color="#fff6c4"/><stop offset="45%" stop-color="#f8d92a"/><stop offset="100%" stop-color="#b26f1f"/>
+            </radialGradient>
+          </defs>
+          <g class="lucky-spin">
+            <circle cx="100" cy="100" r="92" fill="none" stroke="url(#gold)" stroke-width="5" stroke-dasharray="3 10" stroke-linecap="round"/>
+          </g>
+          <g stroke="#f8d92a" stroke-width="3">
+            <path d="M100 100 C70 100 52 80 58 58 C64 38 90 40 100 62 C110 40 136 38 142 58 C148 80 130 100 100 100Z" fill="url(#leaf)"/>
+            <path d="M100 100 C70 100 52 80 58 58 C64 38 90 40 100 62 C110 40 136 38 142 58 C148 80 130 100 100 100Z" fill="url(#leaf)" transform="rotate(90 100 100)"/>
+            <path d="M100 100 C70 100 52 80 58 58 C64 38 90 40 100 62 C110 40 136 38 142 58 C148 80 130 100 100 100Z" fill="url(#leaf)" transform="rotate(180 100 100)"/>
+            <path d="M100 100 C70 100 52 80 58 58 C64 38 90 40 100 62 C110 40 136 38 142 58 C148 80 130 100 100 100Z" fill="url(#leaf)" transform="rotate(270 100 100)"/>
+          </g>
+          <circle cx="100" cy="100" r="14" fill="url(#gold)"/>
+        </svg>
+      </div>
+
+      <div class="coin c1">$</div>
+      <div class="coin c2">$</div>
+      <div class="coin c3">$</div>
+      <div class="coin c4">$</div>
+      <div class="coin c5">$</div>
+      <div class="coin c6">$</div>
+      <div class="coin c7">$</div>
+
+      <!-- header -->
+      <header class="hdr">
+        <div class="logo" id="logo">
+          <svg class="logo-mark" viewBox="0 0 100 100" aria-hidden="true">
+            <g fill="#3fb54a" stroke="#eca647" stroke-width="3">
+              <circle cx="50" cy="28" r="20"/><circle cx="72" cy="50" r="20"/><circle cx="50" cy="72" r="20"/><circle cx="28" cy="50" r="20"/>
+            </g>
+            <circle cx="50" cy="50" r="9" fill="#f8d92a"/>
+          </svg>
+          <div class="logo-txt"><span class="l1">Sonho</span><span class="l2">dá Sorte</span></div>
+        </div>
+        <div class="hdr-right">
+          <div class="date" id="dateLabel">&nbsp;</div>
+          <div class="clock" id="clock">00:00:00</div>
+        </div>
+      </header>
+
+      <!-- pílula do sorteio -->
+      <div class="pill">
+        <div class="pill-left">
+          <svg viewBox="0 0 100 100" aria-hidden="true">
+            <g fill="#3fb54a" stroke="#f8d92a" stroke-width="4">
+              <circle cx="50" cy="28" r="20"/><circle cx="72" cy="50" r="20"/><circle cx="50" cy="72" r="20"/><circle cx="28" cy="50" r="20"/>
+            </g>
+          </svg>
+          <span>Sorteio <span id="sorteioNum">0</span></span>
+        </div>
+        <div class="pill-right">
+          <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke-width="2"/><path d="M12 7v5l3 2" stroke-width="2" stroke-linecap="round"/></svg>
+          <span id="drawTime">10:00</span>
+        </div>
+      </div>
+
+      <!-- título -->
+      <div class="title"><span class="flourish left"></span><span class="title-text">NÚMERO SORTEADO</span><span class="flourish right"></span></div>
+
+      <!-- bolas -->
+      <div class="balls" id="balls"></div>
+
+      <!-- prêmios -->
+      <div class="tiers" id="tiers"></div>
+
+      <!-- ganhadores -->
+      <div class="winners">
+        <svg class="trophy" viewBox="0 0 64 64" aria-hidden="true">
+          <defs><linearGradient id="tg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff2a8"/><stop offset=".5" stop-color="#f8d92a"/><stop offset="1" stop-color="#c7801f"/></linearGradient></defs>
+          <path d="M18 8h28v14c0 9-6 16-14 16S18 31 18 22z" fill="url(#tg)"/>
+          <path d="M18 12H9c0 9 4 14 11 15M46 12h9c0 9-4 14-11 15" fill="none" stroke="#eca647" stroke-width="4"/>
+          <rect x="28" y="37" width="8" height="10" fill="#eca647"/>
+          <rect x="19" y="47" width="26" height="8" rx="2" fill="url(#tg)"/>
+        </svg>
+        <div class="winners-txt"><b id="winners" class="dim">•••</b> ganhadores neste sorteio</div>
+      </div>
+
+      <!-- próximo sorteio -->
+      <div class="card">
+        <div class="card-kicker">PRÓXIMO SORTEIO</div>
+        <div class="card-when" id="nextLabel">Hoje às 11h</div>
+        <div class="cd">
+          <div class="cd-grp"><span class="cd-num" id="nextH">00</span><span class="cd-lab">hr</span></div>
+          <span class="cd-sep">:</span>
+          <div class="cd-grp"><span class="cd-num" id="nextM">00</span><span class="cd-lab">min</span></div>
+          <span class="cd-sep">:</span>
+          <div class="cd-grp"><span class="cd-num" id="nextS">00</span><span class="cd-lab">seg</span></div>
+        </div>
+        <div class="bar"><div class="bar-fill" id="barFill"></div></div>
+      </div>
+
+      <!-- QR -->
+      <div class="qr-box">
+        <div class="qr" id="qr"></div>
+        <div class="qr-cap" id="qrCaption">Aponte a câmera e participe</div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  'use strict';
+
+  // ===================== CONFIG (edite aqui) =====================
+  // Também pode ser sobrescrito por window.TOTEM_CONFIG (PHP)
+  // ou pela URL: ?sorteio=120&intervalo=600&hora=10:00&proximo=Hoje%20às%2011h
+  var CONFIG = {
+    sorteioNum: 114,          // número inicial do sorteio
+    drawIntervalSec: 20,      // tempo entre sorteios na tela (produção: ex. 600)
+    spinMs: 700,              // tempo que cada bola "roda"
+    gapMs: 180,               // pausa entre uma bola e a próxima
+    digits: 6,                // quantidade de dígitos
+    drawTime: '10:00',        // horário exibido na pílula
+    nextDrawSec: 24*60 + 48,  // contador do card "próximo sorteio"
+    nextDrawLabel: 'Hoje às 11h',
+    numero: '',               // número fixo (ex.: '482913'); vazio = aleatório
+    ganhadores: null,         // total fixo de ganhadores; null = aleatório
+    logoUrl: '',              // URL/arquivo do logo (vazio = logo SVG padrão)
+    qrUrl: '',                // URL/arquivo da imagem do QR code
+    qrCaption: 'Aponte a câmera e participe',
+    reloadMinutes: 0          // recarrega a página a cada X min (0 = nunca)
+  };
+  // ===============================================================
+
+  var ext = window.TOTEM_CONFIG || {};
+  for (var k in ext) { if (ext.hasOwnProperty(k)) CONFIG[k] = ext[k]; }
+
+  var qs = {};
+  location.search.replace(/[?&]([^=&]+)=([^&]*)/g, function(_, key, val){ qs[key] = decodeURIComponent(val.replace(/\+/g,' ')); });
+  if (qs.sorteio)   CONFIG.sorteioNum = parseInt(qs.sorteio, 10) || CONFIG.sorteioNum;
+  if (qs.intervalo) CONFIG.drawIntervalSec = parseInt(qs.intervalo, 10) || CONFIG.drawIntervalSec;
+  if (qs.hora)      CONFIG.drawTime = qs.hora;
+  if (qs.proximo)   CONFIG.nextDrawLabel = qs.proximo;
+  if (qs.numero)    CONFIG.numero = qs.numero;
+
+  var WD = ['Domingo','Segunda-feira','Terça-feira','Quarta-feira','Quinta-feira','Sexta-feira','Sábado'];
+  function pad(n){ n = String(n); return n.length < 2 ? '0' + n : n; }
+  function $(id){ return document.getElementById(id); }
+  function rnd(n){ return Math.floor(Math.random() * n); }
+
+  // ---------- escala para caber na tela ----------
+  var scaler = $('scaler');
+  function fit(){
+    var s = Math.min(window.innerWidth / 1080, window.innerHeight / 1920);
+    var t = 'translate(-50%,-50%) scale(' + s + ')';
+    scaler.style.webkitTransform = t; scaler.style.transform = t;
+  }
+  fit();
+  window.addEventListener('resize', fit);
+  window.addEventListener('orientationchange', fit);
+
+  // ---------- relógio ----------
+  function tickClock(){
+    var d = new Date();
+    $('dateLabel').textContent = WD[d.getDay()] + ', ' + pad(d.getDate()) + '/' + pad(d.getMonth() + 1);
+    $('clock').textContent = pad(d.getHours()) + ':' + pad(d.getMinutes()) + ':' + pad(d.getSeconds());
+  }
+
+  // ---------- textos fixos ----------
+  $('drawTime').textContent = CONFIG.drawTime;
+  $('nextLabel').textContent = CONFIG.nextDrawLabel;
+  $('qrCaption').textContent = CONFIG.qrCaption;
+  var sorteioNum = CONFIG.sorteioNum;
+  $('sorteioNum').textContent = sorteioNum;
+
+  if (CONFIG.logoUrl) { $('logo').innerHTML = '<img src="' + CONFIG.logoUrl + '" alt="Logo">'; }
+
+  // QR: imagem real ou padrão ilustrativo
+  if (CONFIG.qrUrl) {
+    $('qr').innerHTML = '<img src="' + CONFIG.qrUrl + '" alt="QR code">';
+  } else {
+    var cells = '', N = 25, seed = 7;
+    function prnd(){ seed = (seed * 9301 + 49297) % 233280; return seed / 233280; }
+    function finder(x, y){
+      return '<rect x="'+x+'" y="'+y+'" width="7" height="7" fill="#1b1330"/>' +
+             '<rect x="'+(x+1)+'" y="'+(y+1)+'" width="5" height="5" fill="#fff"/>' +
+             '<rect x="'+(x+2)+'" y="'+(y+2)+'" width="3" height="3" fill="#1b1330"/>';
+    }
+    for (var y = 0; y < N; y++) for (var x = 0; x < N; x++) {
+      var inF = (x < 8 && y < 8) || (x > N-9 && y < 8) || (x < 8 && y > N-9);
+      if (!inF && prnd() > .52) cells += '<rect x="'+x+'" y="'+y+'" width="1" height="1" fill="#1b1330"/>';
+    }
+    $('qr').innerHTML = '<svg viewBox="0 0 '+N+' '+N+'" shape-rendering="crispEdges">' + cells +
+      finder(0,0) + finder(N-7,0) + finder(0,N-7) + '</svg>';
+  }
+
+  // ---------- números decorativos ----------
+  var bgNums = [
+    {t:'57',x:6, y:14,r:-16,s:70},{t:'58',x:66,y:9, r:12, s:66},{t:'54',x:3, y:34,r:-8, s:64},
+    {t:'11',x:20,y:8, r:22, s:52},{t:'36',x:78,y:22,r:-14,s:60},{t:'30',x:40,y:6, r:8,  s:48},
+    {t:'78',x:74,y:38,r:18, s:58},{t:'43',x:2, y:56,r:-20,s:66},{t:'41',x:14,y:62,r:14, s:56},
+    {t:'39',x:34,y:60,r:-10,s:70},{t:'37',x:60,y:56,r:16, s:52},{t:'54',x:24,y:78,r:-12,s:60},
+    {t:'11',x:84,y:60,r:10, s:48},{t:'62',x:50,y:44,r:-6, s:44}
+  ];
+  var bgHtml = '';
+  for (var i = 0; i < bgNums.length; i++) {
+    var n = bgNums[i];
+    bgHtml += '<span style="left:'+n.x+'%;top:'+n.y+'%;font-size:'+n.s+'px;-webkit-transform:rotate('+n.r+'deg);transform:rotate('+n.r+'deg)">'+n.t+'</span>';
+  }
+  $('bgNumbers').innerHTML = bgHtml;
+
+  // ---------- bolas ----------
+  var ballsEl = $('balls'), balls = [];
+  for (i = 0; i < CONFIG.digits; i++) {
+    var b = document.createElement('div');
+    b.className = 'ball';
+    b.innerHTML = '<span class="digit"></span>';
+    ballsEl.appendChild(b);
+    balls.push({ el: b, digitEl: b.firstChild });
+  }
+
+  // ---------- prêmios ----------
+  var TIER_DEF = [
+    { name:'Sena',   icon:'💰', take:6 },
+    { name:'Quina',  icon:'⭐', take:5 },
+    { name:'Quadra', icon:'🍀', take:4 },
+    { name:'Trinca', icon:'✨', take:3 },
+    { name:'Dupla',  icon:'✌️', take:2 }
+  ];
+  var tiersEl = $('tiers'), tierEls = [];
+  for (i = 0; i < TIER_DEF.length; i++) {
+    var t = document.createElement('div');
+    t.className = 'tier';
+    t.innerHTML = '<div class="tier-icon">'+TIER_DEF[i].icon+'</div><div class="tier-name">'+TIER_DEF[i].name+'</div><div class="tier-value"></div>';
+    var v = t.lastChild;
+    v.style.webkitAnimationDelay = v.style.animationDelay = (i * 0.09) + 's';
+    tiersEl.appendChild(t);
+    tierEls.push({ el: t, valueEl: v, take: TIER_DEF[i].take });
+  }
+  function renderTiers(numberStr){
+    for (var j = 0; j < tierEls.length; j++) {
+      var te = tierEls[j];
+      if (numberStr) { te.valueEl.textContent = numberStr.slice(-te.take); te.el.className = 'tier show'; }
+      else { te.valueEl.textContent = '••••••'.slice(0, te.take); te.el.className = 'tier'; }
+    }
+  }
+
+  // ---------- ganhadores ----------
+  var winnersEl = $('winners');
+  function animateWinners(to){
+    winnersEl.className = '';
+    var dur = 1200, t0 = Date.now();
+    (function step(){
+      var k = Math.min(1, (Date.now() - t0) / dur);
+      winnersEl.textContent = Math.round(to * (1 - Math.pow(1 - k, 3)));
+      if (k < 1) requestAnimationFrame(step);
+    })();
+  }
+
+  // ---------- sorteio ----------
+  function revealBall(i, final, done){
+    var b = balls[i];
+    b.el.className = 'ball spin';
+    var spin = setInterval(function(){ b.digitEl.textContent = rnd(10); }, 60);
+    setTimeout(function(){
+      clearInterval(spin);
+      b.digitEl.textContent = final;
+      b.el.className = 'ball land glow';
+      setTimeout(function(){ b.el.className = 'ball'; }, 900);
+      done();
+    }, CONFIG.spinMs);
+  }
+
+  var revealing = false;
+  function drawNumber(){
+    if (revealing) return;
+    revealing = true;
+    var fixed = String(CONFIG.numero || '').replace(/\D/g, '');
+    var digits = [];
+    for (var j = 0; j < CONFIG.digits; j++) digits.push(fixed.length === CONFIG.digits ? fixed.charAt(j) : String(rnd(10)));
+
+    winnersEl.className = 'dim'; winnersEl.textContent = '•••';
+    renderTiers('');
+    for (j = 0; j < balls.length; j++) { balls[j].digitEl.textContent = ''; balls[j].el.className = 'ball'; }
+
+    var idx = 0;
+    (function next(){
+      if (idx >= CONFIG.digits) {
+        revealing = false;
+        renderTiers(digits.join(''));
+        animateWinners(CONFIG.ganhadores != null ? CONFIG.ganhadores : 40 + rnd(300));
+        return;
+      }
+      revealBall(idx, digits[idx], function(){ idx++; setTimeout(next, CONFIG.gapMs); });
+    })();
+  }
+
+  // ---------- contadores ----------
+  var pillLeft = CONFIG.drawIntervalSec;
+  var nextLeft = CONFIG.nextDrawSec;
+  function renderCountdown(){
+    $('nextH').textContent = pad(Math.floor(nextLeft / 3600));
+    $('nextM').textContent = pad(Math.floor((nextLeft % 3600) / 60));
+    $('nextS').textContent = pad(nextLeft % 60);
+    $('barFill').style.width = ((1 - nextLeft / CONFIG.nextDrawSec) * 100) + '%';
+  }
+
+  tickClock();
+  renderCountdown();
+  drawNumber();
+
+  setInterval(function(){
+    tickClock();
+    if (pillLeft > 0) { pillLeft--; }
+    else { sorteioNum++; $('sorteioNum').textContent = sorteioNum; pillLeft = CONFIG.drawIntervalSec; drawNumber(); }
+    nextLeft = nextLeft > 0 ? nextLeft - 1 : CONFIG.nextDrawSec;
+    renderCountdown();
+  }, 1000);
+
+  // recarga periódica (útil em players de signage que ficam dias ligados)
+  if (CONFIG.reloadMinutes > 0) setTimeout(function(){ location.reload(); }, CONFIG.reloadMinutes * 60000);
+})();
+</script>
+</body>
+</html>
